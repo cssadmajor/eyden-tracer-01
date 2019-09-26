@@ -25,6 +25,23 @@ public:
 		, m_up(up)
 	{
 		// --- PUT YOUR CODE HERE ---
+		
+        for(int i = 0; i < resolution.height;i++)
+            {
+            for(int j = 0; j < resolution.width;j++)
+            {
+            float ndcx= (i + 0.5) / resolution.width;
+            float ndcy= (j + 0.5) /resolution.width;
+            // Screen space coordinates [-1, 1]
+            float sscx= 2 *ndcx-1;
+            float sscy= 2 * ndcy-1;
+            dir = sscx*i+ sscy*j+ ICamera->pos - ICamera->dir;
+            normalize(dir); // May normalize here
+            // Trace ray and assign color to pixel
+            
+            }
+            }
+		
 	}
 	virtual ~CCameraPerspective(void) = default;
 

@@ -21,8 +21,10 @@ Mat RenderFrame(ICamera& camera)
 	
 	for(int y = 0; y< img.rows; y++)
 		for (int x = 0; x < img.cols; x++) {
+			//InitRay(float x, float y, Ray& ray
 			
 			// Initialize your ray here
+			camera.InitRay(x,y,ray);
 			
 			// Your code
 			
@@ -34,6 +36,13 @@ Mat RenderFrame(ICamera& camera)
 			 */
 			
 			// Your code
+			if (s2.Intersect(ray))
+			{col = RGB(0,0,1);}
+			s3.Intersect(ray);
+			p1.Intersect(ray);
+			s1.Intersect(ray);
+			t1.Intersect(ray);
+			t2.Intersect(ray);
 			
 			img.at<Vec3f>(y, x) = col; // store pixel color
 		}
@@ -46,7 +55,6 @@ int main(int argc, char* argv[])
 {
 	const Size resolution(800, 600);
 	// render three images with different camera settings
-	printf("Does main work?\n");
 	CCameraPerspective c1(Vec3f(0, 0, 10), Vec3f(0, 0, -1), Vec3f(0, 1, 0), 60, resolution);
 	Mat img1 = RenderFrame(c1);
 	imwrite("perspective1.jpg", img1);
