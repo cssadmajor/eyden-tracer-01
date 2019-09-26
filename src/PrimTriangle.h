@@ -26,43 +26,54 @@ public:
 	
 	virtual bool Intersect(Ray& ray) override
 	{
-		// --- PUT YOUR CODE HERE ---
-		//Vec3f N = cross(m_a,m_b);
-		Vec3f N = m_a.cross(m_b);
-		//normalize(cross(a,b));
-		normalize(N);
-		float D = N.dot(m_a);
-		//float t = - (dot(N, ray.org) + D) / dot(N, ray.dir); 
-		float t = - (N.dot(ray.org) + D)/ (N.dot(ray.dir));
-		if (t < 0)
-		{
-			return false;
-		}
-		Vec3f P = ray.org + t * ray.dir; 
-		//Vec3f Phit = origin + t * dir; 
-	Vec3f X; 
 
-// edge 0
-    Vec3f edge0 = m_b -m_a; 
-    Vec3f vp0 = P - m_a; 
-    X = edge0.cross(m_a); 
-    if (N.dot(X)< 0) 
-	{return false; }// P is on the right side 
- 
-    // edge 1
-    Vec3f edge1 = m_c-m_b; 
-    Vec3f vp1 = P - m_b; 
-    X = edge1.cross(m_b); 
-    if (N.dot(X) < 0)  
-	{return false;} // P is on the right side 
- 
-    // edge 2
-    Vec3f edge2 = m_a-m_c; 
-    Vec3f vp2 = P - m_c; 
-    X = edge2.cross(m_c); 
-    if (N.dot(X) < 0) 
-	{return false;} // P is on the right side; 
-		return true;
+		//Reference: Scratch Pixel:
+
+		Vec3f v0v1 = m_b - m_a;
+		Vec3f v0v2 = m_c - m_a;
+
+		Vec3f N = v0v1.cross(v0v2);
+		float NdotRayDirection = N.dot(ray.dir);
+
+		// if the determinant is close to 0, the ray misses the triangle
+		if (fabs(NdotRayDirection) < Epsilon) 
+			return false;					  
+
+		float d = N.dot(m_a);
+
+		// the triangle is behind
+		ray.t = (N.dot(ray.org) + d) / NdotRayDirection;
+		if (ray.t < 0)
+			return false; 
+
+		// compute the intersection point using equation 1
+		Vec3f P = ray.org + ray.t * ray.dir;
+		
+		// Step 2: inside-outside test
+		Vec3f C; // vector perpendicular to triangle's plane
+
+		// edge 0
+		Vec3f edge0 = m_b - m_a;
+		Vec3f vp0 = P - m_b;
+		C = edge0.cross(vp0);
+		if (N.dot(C) < 0)
+			return false; // P is on the right side
+
+		// edge 1
+		Vec3f edge1 = m_c - m_b;
+		Vec3f vp1 = P - m_b;
+		C = edge1.cross(vp1);
+		if (N.dot(C) < 0)
+			return false; // P is on the right side
+
+		// edge 2
+		Vec3f edge2 = m_a - m_c;
+		Vec3f vp2 = P - m_c;
+		C = edge2.cross(vp2);
+		if (N.dot(C) < 0)
+			return false; // P is on the right side;
+
+		return true; // this ray hits the triangle
 	}
 
 	

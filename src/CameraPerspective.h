@@ -25,8 +25,16 @@ public:
 		, m_up(up)
 	{
 		// --- PUT YOUR CODE HERE ---
+		m_zAxis = normalize(dir);
+		m_xAxis = normalize(up * m_zAxis);
+		m_yAxis = normalize(m_xAxis * m_zAxis);
+		m_aspect = resolution.width / float(resolution.height);
+
+		// opening angle:
+		float angleInRad = angle * (float)M_PI / 180.f;
+		m_focus = 1.f / tan(angleInRad / 2.f);
 		
-        for(int i = 0; i < resolution.height;i++)
+        /*for(int i = 0; i < resolution.height;i++)
             {
             for(int j = 0; j < resolution.width;j++)
             {
@@ -40,7 +48,7 @@ public:
             // Trace ray and assign color to pixel
             
             }
-            }
+            }*/
 		
 	}
 	virtual ~CCameraPerspective(void) = default;
@@ -48,7 +56,11 @@ public:
 	virtual bool InitRay(float x, float y, Ray& ray) override
 	{
 		// --- PUT YOUR CODE HERE ---
-		return true;
+		ray.org = m_pos;
+		ray.dir = (m_xAxis * (2.0f * ((x / (float)getResolution().width - .5f) * m_aspect))) + 
+						(m_yAxis * (2.0f * (y / (float)getResolution().height - .5f))) + (m_zAxis * m_focus);
+		ray.dir = normalize(ray.dir);
+		//return true;
 	}
 
 

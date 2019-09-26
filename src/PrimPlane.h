@@ -27,8 +27,21 @@ public:
 	virtual bool Intersect(Ray& ray) override
 	{
 		// --- PUT YOUR CODE HERE ---
-		float tm = (m_origin - ray.org).dot(m_normal) / ray.dir.dot(m_normal);
-		return true;
+		
+		/*float tm = (m_origin - ray.org).dot(m_normal) / ray.dir.dot(m_normal);
+		return true;*/
+
+		float pl = m_normal.dot(ray.dir);
+
+		if (pl > 1e-6)
+		{
+			Vec3f po = m_origin - ray.org;
+			float num = po.dot(m_normal);
+			ray.t = num / pl;
+			return (ray.t >= 0); 		//checking range
+		}
+
+		return false;
 	}
 	
 	

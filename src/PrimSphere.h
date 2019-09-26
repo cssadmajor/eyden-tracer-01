@@ -21,18 +21,19 @@ public:
 		, m_radius(radius)
 	{}
 	virtual ~CPrimSphere(void) = default;
-
+	
 	virtual bool Intersect(Ray &ray) override
 	{
 		// --- PUT YOUR CODE HERE ---
-		//float t = (-2*ray.dir.dot.ray.org + 2*ray.dir.dot.m_center + sqrt((2*ray.dir.dot.ray.org- 2*ray.dir.dot.m_center) * (2*ray.dir.dot.ray.org - 2*ray.dir.dot.m_center) - 4*ray.dir.dot.dir((ray.org-m_center).dot.(ray.org-m_center)-(m_radius*m_radius)))/2*ray.dir.dot.dir);
+		//Code Reference: Scratch Pixel
+
 		float a, b, c;
 		float t1, t2;
-		// ray.dir = normalize(ray.dir);
+		
 		a = ray.dir.dot(ray.dir);
 		b = 2 * ray.dir.dot(ray.org - m_center);
 		c = ((ray.org - m_center).dot(ray.org - m_center)) - (m_radius * m_radius);
-
+		
 		if ((b*b) - (4 * a *c) < 0){
 			printf("Invalid!");
 			return false;
@@ -48,11 +49,8 @@ public:
 			t1 = ((-1*b) + sqrt((b*b) - (4*a*c)) / (2 * a));
 			t2 = ((-1*b) - sqrt((b*b) - (4*a*c)) / (2 * a));
 		}
-		
 		return true;
 	}
-	
-	
 private:
 	Vec3f m_center;	///< Position of the center of the sphere
 	float m_radius;	///< Radius of the sphere
