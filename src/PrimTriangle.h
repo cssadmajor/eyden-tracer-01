@@ -33,22 +33,26 @@ public:
 		Vec3f v0v2 = m_c - m_a;
 
 		Vec3f N = v0v1.cross(v0v2);
-		float NdotRayDirection = N.dot(ray.dir);
+		float NRD = N.dot(ray.dir);
 
 		// if the determinant is close to 0, the ray misses the triangle
-		if (fabs(NdotRayDirection) < Epsilon) 
-			return false;					  
+		if (fabs(NRD) < Epsilon) 
+			{
+				return false;	
+			}				  
 
 		float d = N.dot(m_a);
 
 		// the triangle is behind
-		ray.t = (N.dot(ray.org) + d) / NdotRayDirection;
+		ray.t = (N.dot(ray.org) + d) / NRD;
 		if (ray.t < 0)
-			return false; 
+			{
+				return false; 
+			}
 
 		// compute the intersection point using equation 1
 		Vec3f P = ray.org + ray.t * ray.dir;
-		
+
 		// Step 2: inside-outside test
 		Vec3f C; // vector perpendicular to triangle's plane
 
@@ -57,21 +61,27 @@ public:
 		Vec3f vp0 = P - m_b;
 		C = edge0.cross(vp0);
 		if (N.dot(C) < 0)
-			return false; // P is on the right side
+			{
+				return false; // P is on the right side
+			}
 
 		// edge 1
 		Vec3f edge1 = m_c - m_b;
 		Vec3f vp1 = P - m_b;
 		C = edge1.cross(vp1);
 		if (N.dot(C) < 0)
-			return false; // P is on the right side
+			{
+				return false; // P is on the right side
+			}
 
 		// edge 2
 		Vec3f edge2 = m_a - m_c;
 		Vec3f vp2 = P - m_c;
 		C = edge2.cross(vp2);
 		if (N.dot(C) < 0)
-			return false; // P is on the right side;
+			{
+				return false; // P is on the right side;
+			}
 
 		return true; // this ray hits the triangle
 	}

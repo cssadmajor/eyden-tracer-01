@@ -21,14 +21,12 @@ Mat RenderFrame(ICamera& camera)
 	
 	for(int y = 0; y< img.rows; y++)
 		for (int x = 0; x < img.cols; x++) {
-			//InitRay(float x, float y, Ray& ray
+			//InitRay(float x, float y, Ray& ray)
 			
 			// Initialize your ray here
 			camera.InitRay(x,y,ray);
-			
-			// Your code
-			
-			Vec3f col = RGB(1, 1, 0); // background color
+			// background color
+			Vec3f col = RGB(1, 1, 0); 
 			
 			/*
 			 * Find closest intersection with scene
