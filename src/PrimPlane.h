@@ -16,36 +16,47 @@ public:
 	 * @param normal Normal to the plane
 	 */
 	CPrimPlane(Vec3f origin, Vec3f normal)
-		: CPrim()
-		, m_normal(normal)
-		, m_origin(origin)
+		: CPrim(), m_normal(normal), m_origin(origin)
 	{
 		normalize(m_normal);
 	}
 	virtual ~CPrimPlane(void) = default;
 
-	virtual bool Intersect(Ray& ray) override
+	virtual bool Intersect(Ray &ray) override
 	{
 		// --- PUT YOUR CODE HERE ---
-		
-		/*float tm = (m_origin - ray.org).dot(m_normal) / ray.dir.dot(m_normal);
-		return true;*/
 
-		float pl = m_normal.dot(ray.dir);
+		//Refernece: course slides + what TA explained via email
 
-		if (pl > 1e-6)
+		float val; //val = Current/maximum hit distance
+		float num = m_normal.dot(m_origin - ray.org);
+		float den = m_normal.dot(ray.dir);
+
+		if (den != 0)
 		{
-			Vec3f po = m_origin - ray.org;
-			float num = po.dot(m_normal);
-			ray.t = num / pl;
-			return (ray.t >= 0); 		//checking range
+			val = num/den;
 		}
+		else
+		{
+			printf("Inavlid\n");
+			return 0;
+		}
+					 
 
-		return false;
+		//checking ranges. 
+		//if val is too close to epsilon, sol is invalid
+
+		if (val < Epsilon || val > ray.t)
+		{
+			return false;
+		}
+		//assigning value to ray.t
+		ray.t = val;
+
+		return true;
 	}
-	
-	
+
 private:
-	Vec3f m_normal;	///< Point on the plane
-	Vec3f m_origin;	///< Normal to the plane
+	Vec3f m_normal; ///< Point on the plane
+	Vec3f m_origin; ///< Normal to the plane
 };

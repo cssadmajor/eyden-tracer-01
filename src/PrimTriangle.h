@@ -17,78 +17,48 @@ public:
 	 * @param c Position of the third vertex
 	 */
 	CPrimTriangle(Vec3f a, Vec3f b, Vec3f c)
-		: CPrim()
-		, m_a(a)
-		, m_b(b)
-		, m_c(c)
-  	{}
-	virtual ~CPrimTriangle(void) = default;
-	
-	virtual bool Intersect(Ray& ray) override
+		: CPrim(), m_a(a), m_b(b), m_c(c)
 	{
+	}
+	virtual ~CPrimTriangle(void) = default;
 
-		//Reference: Scratch Pixel:
+	virtual bool Intersect(Ray &ray) override
+	{
+		// --- PUT YOUR CODE HERE ---
 
-		Vec3f v0v1 = m_b - m_a;
-		Vec3f v0v2 = m_c - m_a;
+		// Reference: Course Slides/ Scratch Pixel
 
-		Vec3f N = v0v1.cross(v0v2);
-		float NRD = N.dot(ray.dir);
+		Vec3f vecAB = (m_b-ray.org).cross(m_a-ray.org);
+		Vec3f vecBC = (m_c-ray.org).cross(m_b-ray.org);
+		Vec3f vecCA = (m_a-ray.org).cross(m_c-ray.org);
 
-		// if the determinant is close to 0, the ray misses the triangle
-		if (fabs(NRD) < Epsilon) 
-			{
-				return false;	
-			}				  
+		float area = vecAB.dot(ray.dir)+vecBC.dot(ray.dir)+vecCA.dot(ray.dir);
+		float lambdaOne = vecAB.dot(ray.dir)/area;
+		float lambdaTwo = vecBC.dot(ray.dir)/area;
+		float lambdaThree = vecCA.dot(ray.dir)/area;
 
-		float d = N.dot(m_a);
+		if (lambdaOne < 0 || lambdaTwo < 0 || lambdaThree < 0)
+		{
+			printf("Invalid Cases\n");
+			return false;
+		}
 
-		// the triangle is behind
-		ray.t = (N.dot(ray.org) + d) / NRD;
-		if (ray.t < 0)
-			{
-				return false; 
-			}
+		Vec3f phit = lambdaOne*m_a + lambdaTwo*m_b + lambdaThree*m_c;
+		float t = phit[0]/ray.dir[0];
+		
+		//if value is too close to epsilon, it's an ivalid case
+		if (t < Epsilon || t > ray.t)
+		{
+			printf("Invalid Cases\n");
+			return false;
+		}
 
-		// compute the intersection point using equation 1
-		Vec3f P = ray.org + ray.t * ray.dir;
-
-		// Step 2: inside-outside test
-		Vec3f C; // vector perpendicular to triangle's plane
-
-		// edge 0
-		Vec3f edge0 = m_b - m_a;
-		Vec3f vp0 = P - m_b;
-		C = edge0.cross(vp0);
-		if (N.dot(C) < 0)
-			{
-				return false; // P is on the right side
-			}
-
-		// edge 1
-		Vec3f edge1 = m_c - m_b;
-		Vec3f vp1 = P - m_b;
-		C = edge1.cross(vp1);
-		if (N.dot(C) < 0)
-			{
-				return false; // P is on the right side
-			}
-
-		// edge 2
-		Vec3f edge2 = m_a - m_c;
-		Vec3f vp2 = P - m_c;
-		C = edge2.cross(vp2);
-		if (N.dot(C) < 0)
-			{
-				return false; // P is on the right side;
-			}
-
-		return true; // this ray hits the triangle
+		ray.t = t;
+		return true;
 	}
 
-	
 private:
-	Vec3f m_a;	///< Position of the first vertex
-	Vec3f m_b;	///< Position of the second vertex
-	Vec3f m_c;	///< Position of the third vertex
+	Vec3f m_a; ///< Position of the first vertex
+	Vec3f m_b; ///< Position of the second vertex
+	Vec3f m_c; ///< Position of the third vertex
 };
