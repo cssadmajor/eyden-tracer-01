@@ -45,14 +45,14 @@ public:
 
 		//checking ranges. 
 		//if val is too close to epsilon, sol is invalid
-
 		if (val < Epsilon || val > ray.t)
 		{
+			printf("Invalid Case\n");
 			return false;
 		}
+
 		//assigning value to ray.t
 		ray.t = val;
-
 		return true;
 	}
 
